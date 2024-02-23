@@ -15,30 +15,44 @@ JOB REF: UKHSA01111
 # import standard packages
 import pandas as pd
 import collections as co
+import logging
 
 # local libraries
 import ukhsa.functions.functions as lf
 
 #========SETUP==========
+# start engineering log
+logging.basicConfig( filename = f"{config['root']}sd2011.log",
+                     level = 'DEBUG',
+                     format = "%(asctime)s - %(levelname)s - %(message)s",
+                     datefmt = "%Y-%m-%d")
 
-# read config
-config = read_yaml('ukhsa/config.yml')
+# create empty dictionary to record quality metrics
+quality_metrics = co.OrderedDict()
 
-# read data dictionary
-data_dictionary = pd.read_csv(config['data_dict_path'])
+#------READ DATA----------
+# pipeline settings
+config = read_yaml(f'ukhsa/config.yml')
 
-# read input data
-sd2011 = pd.read_csv(config['sd2011_path'])
+# data dictionary
+data_dictionary = pd.read_csv(f"{config['root']}{config['data_dict_path']}")
 
+# input data
+sd2011 = pd.read_csv(f"{config['root']}{config['sd2011_path']}")
+
+# QA: record row count after reading
+quality_metrics['sd2011_initial_rows'] = sd2011.shape[0]
+
+logging.info(f"read main input file with {quality_metrics['sd2011_initial_rows']} rows")
+
+
+#--------------PARAMETERS--------------
 # define columns for each output:
 # ... those defined in the data dictionary
 # ... please those agreed to be in both outputs
 output_columns = {'attributes' : set(list(data_dictionary.loc[~data_dictionary['DISCLOSIVE']]['COLUMN']) + config['output_columns_both']),
                  'identifiers' : set(list(data_dictionary.loc[data_dictionary['DISCLOSIVE']]['COLUMN']) + config['output_columns_both'])}
 
-
-
-quality_metrics = co.OrderedDict()
 
 #========CLEANING==========
 # header lower case
@@ -62,3 +76,5 @@ for output in output_columns.keys():
   quality_metrics[f'{output}_rows'] = file.shape[0]
   
   file.to_csv(f'{config['out_folder']}{output}.csv')
+  
+  logging.info(f"write {output}.csv with {quality_metrics[f'{output}_rows']} rows")

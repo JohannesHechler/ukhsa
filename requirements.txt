@@ -2,3 +2,5 @@ pandas
 yaml
 pytest
 unittest
+logging
+collections
