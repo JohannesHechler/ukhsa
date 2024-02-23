@@ -1,0 +1,37 @@
+COLUMN,DESCRIPTION,DISCLOSIVE
+id,national insurance number,TRUE
+sex,Sex,FALSE
+age,"Age of person, 2011",FALSE
+agegr,"Age group, 2011",FALSE
+placesize,Category of the place of residence,FALSE
+region,Region (voivodeship),FALSE
+edu,"Highest educational qualification, 2011",FALSE
+eduspec,Discipline of completed qualification,FALSE
+socprof,"Socio-economic status, 2011",FALSE
+unempdur,Total duration of unemployment in the last 2 years (in months),FALSE
+income,Personal monthly net income,TRUE
+marital,Marital status,FALSE
+mmarr,Month of marriage,FALSE
+ymarr,Year of marriage,FALSE
+msepdiv,Month of separation/divorce,FALSE
+ysepdiv,Year of separation/divorce,FALSE
+ls,Perception of life as a whole,FALSE
+depress,Depression symptoms indicator,TRUE
+trust,View on interpersonal trust,FALSE
+trustfam,Trust in own family members,FALSE
+trustneigh,Trust in neighbours,FALSE
+sport,Active engagement in some form of sport or exercise,FALSE
+nofriend,Number of friends,FALSE
+smoke,Smoking cigarettes,FALSE
+nociga,Number of cigarettes smoked per day,FALSE
+alcabuse,Drinking too much alcohol,TRUE
+alcsol,Starting to use alcohol to cope with troubles,FALSE
+workab,Working abroad in 2007-2011,FALSE
+wkabdur,Total time spent on working abroad,TRUE
+wkabint,Plans to go abroad to work in the next two years,FALSE
+wkabintdur,Intended duration of working abroad,FALSE
+emcc,Intended destination country,FALSE
+englang,Knowledge of English language,FALSE
+height,Height of person,TRUE
+weight,Weight of person,TRUE
+bmi,Body mass index,TRUE

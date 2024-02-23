@@ -1,1 +1,13 @@
 sd2011_path : ukhsa/sd2011.csv
+data_dict_path : ukhsa/data_dictionary_sd2011.csv
+
+out_folder : ukhsa/outputs/
+
+recode_mapping:
+  sex : 
+    FEMALE : 1
+    MALE : 2
+    
+output_columns_both:
+ - age
+ - sex
