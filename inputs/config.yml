@@ -1,7 +1,7 @@
 root : ukhsa/
 
-sd2011_path : sd2011.csv
-data_dict_path : data_dictionary_sd2011.csv
+sd2011_path : inputs/sd2011.csv
+data_dict_path : inputs/data_dictionary_sd2011.csv
 
 out_folder : outputs/
 

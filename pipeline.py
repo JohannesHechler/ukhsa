@@ -32,7 +32,7 @@ quality_metrics = co.OrderedDict()
 
 #------READ DATA----------
 # pipeline settings
-config = read_yaml(f'ukhsa/config.yml')
+config = read_yaml(f'ukhsa/inputs/config.yml')
 
 # data dictionary
 data_dictionary = pd.read_csv(f"{config['root']}{config['data_dict_path']}")
