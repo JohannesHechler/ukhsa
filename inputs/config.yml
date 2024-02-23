@@ -1,7 +1,7 @@
 root : ukhsa/
 
 sd2011_path : inputs/sd2011.csv
-data_dict_path : inputs/data_dictionary_sd2011.csv
+data_dict_path : inputs/data_dictionary.csv
 
 out_folder : outputs/
 
@@ -10,6 +10,13 @@ recode_mapping:
     FEMALE : 1
     MALE : 2
     
-output_columns_both:
- - age
- - sex
+output_columns:
+  attributes:
+  - id_hash
+  both:
+  - age
+  - sex
+ 
+hashing:
+  old_id : id
+  new_id : id_hash

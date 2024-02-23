@@ -16,23 +16,19 @@ JOB REF: UKHSA01111
 import pandas as pd
 import collections as co
 import logging
+import hashlib as hl
 
 # local libraries
 import ukhsa.functions.functions as lf
 
 #========SETUP==========
-# start engineering log
-logging.basicConfig( filename = f"{config['root']}sd2011.log",
-                     level = 'DEBUG',
-                     format = "%(asctime)s - %(levelname)s - %(message)s",
-                     datefmt = "%Y-%m-%d")
 
 # create empty dictionary to record quality metrics
 quality_metrics = co.OrderedDict()
 
 #------READ DATA----------
 # pipeline settings
-config = read_yaml(f'ukhsa/inputs/config.yml')
+config = lf.read_yaml(f'ukhsa/inputs/config.yml')
 
 # data dictionary
 data_dictionary = pd.read_csv(f"{config['root']}{config['data_dict_path']}")
@@ -43,6 +39,14 @@ sd2011 = pd.read_csv(f"{config['root']}{config['sd2011_path']}")
 # QA: record row count after reading
 quality_metrics['sd2011_initial_rows'] = sd2011.shape[0]
 
+
+
+#---------- start engineering log ---------
+logging.basicConfig( filename = f"{config['root']}sd2011.log",
+                     level = 'DEBUG',
+                     format = "%(asctime)s - %(levelname)s - %(message)s",
+                     datefmt = "%Y-%m-%d")
+
 logging.info(f"read main input file with {quality_metrics['sd2011_initial_rows']} rows")
 
 
@@ -50,8 +54,13 @@ logging.info(f"read main input file with {quality_metrics['sd2011_initial_rows']
 # define columns for each output:
 # ... those defined in the data dictionary
 # ... please those agreed to be in both outputs
-output_columns = {'attributes' : set(list(data_dictionary.loc[~data_dictionary['DISCLOSIVE']]['COLUMN']) + config['output_columns_both']),
-                 'identifiers' : set(list(data_dictionary.loc[data_dictionary['DISCLOSIVE']]['COLUMN']) + config['output_columns_both'])}
+output_columns = {'attributes' : set((list(data_dictionary.loc[~data_dictionary['DISCLOSIVE']]['COLUMN']) + 
+                                      config['output_columns']['attributes'] + 
+                                      config['output_columns']['both'])
+                                    ),
+                 'identifiers' : set((list(data_dictionary.loc[data_dictionary['DISCLOSIVE']]['COLUMN']) + 
+                                          config['output_columns']['both'])
+                                    )}
 
 
 #========CLEANING==========
@@ -65,6 +74,9 @@ sd2011 = sd2011.loc[ (sd2011['ymarr'].notna()) &
 
 # recode selected columns
 
+
+#========HASH DISCLOSIVE COLUMN==========
+sd2011[config['hashing']['new_id']] = lf.hash_column(sd2011[config['hashing']['old_id']])
 
 
 #========DEFINE OUTPUTS==========

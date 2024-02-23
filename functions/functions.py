@@ -1,6 +1,7 @@
+import pandas as pd
 import yaml as y
 
-def read_yaml(file_path):
+def read_yaml(file_path:str)->dict:
   """
   Reads a .yaml file from local file system
 
@@ -33,7 +34,7 @@ def read_yaml(file_path):
 
   return data
 
-def clean_header(column):
+def clean_header(column:str)->str:
   """
   Cleans column headers by trimming leading/trailing whitespace, replace spaces 
   with underscores and makes everything lowercase. 
@@ -65,3 +66,20 @@ def clean_header(column):
   
   """
   return column.strip().replace(' ','_').lower()
+
+
+def recode(dataframe:pd.DataFrame,
+           mapping:dict) -> pd.DataFrame:
+  """
+  """
+  for column in recode_mapping.keys():
+    # recode according to mapping
+    dataframe[ column ] = [recode_mapping[column][original_value] for original_value in dataframe[column]]
+
+    # recode any values not expected in mapping to catchall value
+    dataframe[ column ] = dataframe[ column ].fillna(0,
+                                           inplace = True)
+  return dataframe
+
+def hash_column(column:pd.Series) -> list:
+  return [hl.sha256(str(value).encode()) for value in column]
