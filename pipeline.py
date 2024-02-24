@@ -11,17 +11,16 @@ DATE: 23/02/2024
 JOB REF: UKHSA01111
 """
 
+#========SETUP==========
 
 # import standard packages
 import pandas as pd
 import collections as co
 import logging
-import hashlib as hl
 
 # local libraries
 import ukhsa.functions.functions as lf
 
-#========SETUP==========
 
 # create empty dictionary to record quality metrics
 quality_metrics = co.OrderedDict()
@@ -50,6 +49,8 @@ logging.basicConfig( filename = f"{config['root']}sd2011.log",
 logging.info(f"read main input file with {quality_metrics['sd2011_initial_rows']} rows")
 
 
+
+
 #--------------PARAMETERS--------------
 # define columns for each output:
 # ... those defined in the data dictionary
@@ -65,28 +66,38 @@ output_columns = {'attributes' : set((list(data_dictionary.loc[~data_dictionary[
 
 #========CLEANING==========
 # header lower case
-sd2011.columns = [clean_header(column) for column in sd2011.columns]
+sd2011.columns = [lf.clean_header(column) for column in sd2011.columns]
 
 # remove records where either ymarr or workab are NULL
 # restore contiguous index
 sd2011 = sd2011.loc[ (sd2011['ymarr'].notna()) &
-                     (sd2011['workab'].notna())].reset_index()
+                     (sd2011['workab'].notna())].reset_index(drop = True)
 
-# recode selected columns
+# record remaining row count
+quality_metrics['sd2011_filtered_rows'] = sd2011.shape[0]
 
+# recode columns as specified
+sd2011 = lf.recode(dataframe = sd2011,
+                mapping = config['recode_mapping'])
 
 #========HASH DISCLOSIVE COLUMN==========
 sd2011[config['hashing']['new_id']] = lf.hash_column(sd2011[config['hashing']['old_id']])
 
 
-#========DEFINE OUTPUTS==========
-# record quality metrics
-# write to .csv
+#========DEFINE & WRITE OUTPUTS==========
 for output in output_columns.keys():
+  # define subset to write
   file = sd2011[ output_columns[ output ]]
   
+  # record quality metrics
   quality_metrics[f'{output}_rows'] = file.shape[0]
   
-  file.to_csv(f'{config['out_folder']}{output}.csv')
+  # write to .csv
+  file.to_csv(f"{config['root']}{config['out_folder']}{output}.csv")
   
+  # record writing on engineering log
   logging.info(f"write {output}.csv with {quality_metrics[f'{output}_rows']} rows")
+
+  
+# print metrics for review
+quality_metrics

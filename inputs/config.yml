@@ -1,22 +1,28 @@
 root : ukhsa/
 
+# where to find input datasets
 sd2011_path : inputs/sd2011.csv
 data_dict_path : inputs/data_dictionary.csv
 
+# where to write outputs to
 out_folder : outputs/
 
+# which columns to recode, and how
 recode_mapping:
   sex : 
     FEMALE : 1
     MALE : 2
-    
+
+# which columns to include in the output datasets
+# ... in addition to the data dictionary
 output_columns:
   attributes:
   - id_hash
   both:
   - age
   - sex
- 
+
+# which column to hash, and what to call the result
 hashing:
   old_id : id
   new_id : id_hash

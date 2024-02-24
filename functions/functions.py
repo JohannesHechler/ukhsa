@@ -1,5 +1,6 @@
 import pandas as pd
 import yaml as y
+import hashlib as hl
 
 def read_yaml(file_path:str)->dict:
   """
@@ -13,6 +14,10 @@ def read_yaml(file_path:str)->dict:
   -------
   dictionary
 
+  version
+  -------
+  0.1
+  
   parameters
   ----------
   * file_path = full path to file to import
@@ -34,6 +39,8 @@ def read_yaml(file_path:str)->dict:
 
   return data
 
+
+
 def clean_header(column:str)->str:
   """
   Cleans column headers by trimming leading/trailing whitespace, replace spaces 
@@ -53,7 +60,7 @@ def clean_header(column:str)->str:
   
   version
   -------
-  0.0.1
+  0.1
     
   parameters
   ----------
@@ -68,18 +75,90 @@ def clean_header(column:str)->str:
   return column.strip().replace(' ','_').lower()
 
 
+
+
 def recode(dataframe:pd.DataFrame,
            mapping:dict) -> pd.DataFrame:
   """
-  """
-  for column in recode_mapping.keys():
-    # recode according to mapping
-    dataframe[ column ] = [recode_mapping[column][original_value] for original_value in dataframe[column]]
+  recodes columns in a dataframe according to a dictionary
+  
+  language
+  --------
+  python
+    
+  returns
+  -------
+  dataframe with selected columns recoded as specified
+  
+  return type
+  -----------
+  pandas dataframe
+  
+  version
+  -------
+  0.1
+    
+  parameters
+  ----------
+  dataframe = the name of the pandas dataframe to recode
+  `(datatype = pandas dataframe)`. e.g. uk_population
+  mapping = specification of old and new values for any number of columns
+  `(datatype = dict)`. e.g. {'sex' : {'male'   : 1,
+                                      'female' : 2},
+                             'residence' : {'hhd'  : 'household',
+                                            'cest' : 'communal_establishment'}
+                            }
 
+  example
+  -------
+  >>> recode(dataframe = uk_population,
+             mapping = {'sex' : {'male'   : 1,
+                                 'female' : 2},
+                         'residence' : {'hhd'  : 'household',
+                                        'cest' : 'communal_establishment'}
+                      })
+  
+  """
+  for column in mapping.keys():
+    # recode according to mapping
+    dataframe[ column ] = [mapping[column][original_value] for original_value in dataframe[column]]
+    
     # recode any values not expected in mapping to catchall value
     dataframe[ column ] = dataframe[ column ].fillna(0,
-                                           inplace = True)
+                                                     inplace = False)
   return dataframe
 
+
+
+
 def hash_column(column:pd.Series) -> list:
+  """
+  hashes values in a pandas Series according to SHA256 
+  
+  language
+  --------
+  python
+    
+  returns
+  -------
+  hashed values
+  
+  return type
+  -----------
+  list
+  
+  version
+  -------
+  0.1
+    
+  parameters
+  ----------
+  column = the name of the pandas Series to hash
+  `(datatype = pandas Series)`. e.g. pds['id']
+
+  example
+  -------
+  >>> hash_column(column = pds['id'])
+  
+  """
   return [hl.sha256(str(value).encode()) for value in column]
